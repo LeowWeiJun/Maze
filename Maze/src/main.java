@@ -3,6 +3,7 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.Random;
 
 public class main {
     static int columns = 30;
@@ -15,15 +16,18 @@ public class main {
 
     public static void maze(){
         JFrame mainframe = new JFrame("Maze");
-        mainframe.setSize(1000,800);
+        mainframe.setSize(700,652);
         mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainframe.setResizable(false);
         mainframe.setLocationRelativeTo(null);
 
 
         JPanel mainPanel = new JPanel(new GridLayout(30,30));
-        //mainPanel.setPreferredSize(new Dimension(800 ,600));
-        mainframe.add(mainPanel);
+        mainPanel.setPreferredSize(new Dimension(600 ,600));
+        //mainframe.add(mainPanel,BorderLayout.NORTH);
+
+
+
 
 
         //mainPanel.setVisible(true);
@@ -32,6 +36,7 @@ public class main {
         //mainPanel.setBackground(Color.black);
         String str = "maze.txt";
         loadMap(str);
+
 
         JLabel[][] mazeLabel = new JLabel[30][30];
         Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
@@ -49,6 +54,59 @@ public class main {
                 //mainPanel.repaint();
             }
         }
+
+        JButton testButton = new JButton("Start");
+        JButton testButton2 = new JButton("Start1");
+        testButton.setPreferredSize(new Dimension(80,20));
+        JPanel testPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        testPanel.setPreferredSize(new Dimension(100,20));
+        testPanel.add(testButton);
+
+        JSplitPane vsplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        vsplit.setLeftComponent(mainPanel);
+        vsplit.setRightComponent(testPanel);
+        vsplit.setDividerSize(0);
+        vsplit.setEnabled(false);
+        mainframe.getContentPane().add(vsplit);
+
+        //testPanel.add(testButton2);
+        //mainframe.add(testPanel, BorderLayout.SOUTH);
+        //mainPanel.add(testButton, BorderLayout.SOUTH);
+        //mainframe.getContentPane().add(testButton2, BorderLayout.SOUTH);
+        Random rand = new Random();
+
+
+
+        do{
+            int  x = rand.nextInt(28) + 1;
+            int  y = rand.nextInt(28) + 1;
+
+            if(map[x][y] == 0){
+                mazeLabel[x][y].setBackground(Color.BLUE);
+                break;
+            }
+        }while(true);
+
+        int catAmount = 0;
+
+        do{
+            int  x = rand.nextInt(28) + 1;
+            int  y = rand.nextInt(28) + 1;
+
+            if(map[x][y] == 0){
+                mazeLabel[x][y].setBackground(Color.RED);
+                catAmount++;
+            }
+
+            if(catAmount == 2){
+                break;
+            }
+
+        }while(true);
+       //Color tes = testButton.getBackground();
+
+
+
 
 
 
