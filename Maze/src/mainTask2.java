@@ -28,7 +28,7 @@ public class mainTask2 extends JFrame implements KeyListener{
     public static ImageIcon cat=new ImageIcon(newimg2);
 
     public static void main(String[] args){
-        new main();
+        new mainTask2();
     }
 
 
@@ -128,7 +128,7 @@ public class mainTask2 extends JFrame implements KeyListener{
             caty2 = rand.nextInt(30);
 
             //if coordinate same with mouse and cat1 then re-random
-            if(map[catx1][caty1] == 1 || (catx2 == mousex && caty2 == mousey) || (catx2 == catx1 && caty2 == caty1)){
+            if(map[catx2][caty2] == 1 || (catx2 == mousex && caty2 == mousey) || (catx2 == catx1 && caty2 == caty1)){
                 continue;
             }
             mazeLabel[catx2][caty2].setIcon(cat); //spawn cat2
