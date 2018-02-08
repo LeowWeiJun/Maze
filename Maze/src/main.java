@@ -8,13 +8,10 @@ import java.util.Random;
 
 
 public class main extends JFrame implements KeyListener{
-
-    public static JLabel[][] mazeLabel = new JLabel[30][30]; //this mazeLabel initialization i bring up because my keyPressed function nid it
-    //public int catx1, caty1, catx2, caty2; //coordinate of mouse and cats
     public static Random rand = new Random();
-    Mouse m = new Mouse();
-    Cat c1 = new Cat();
-    Cat c2 = new Cat();
+    Mouse m = new Mouse(); //Create mouse
+    Cat c1 = new Cat(); //Create 1st Cat
+    Cat c2 = new Cat(); //Create 2nd Cat
 
     public static void main(String[] args){
         new main();
@@ -28,39 +25,22 @@ public class main extends JFrame implements KeyListener{
         this.setResizable(false);
         this.setLocationRelativeTo(null);
 
+        //Top Panel
         JPanel mainPanel = new JPanel(new GridLayout(30,30));
         mainPanel.setPreferredSize(new Dimension(600 ,600));
         //mainframe.add(mainPanel,BorderLayout.NORTH);
         this.addKeyListener(this);
         this.setFocusable(true);
         this.setFocusTraversalKeysEnabled(false);
-        //mainPanel.setVisible(true);
 
-        //mainPanel.setBackground(Color.black);
         String str = "maze3.txt"; //use the maze i desgined
-        new Maze(str);
+        new Maze(str,mainPanel,m,c1,c2);
 
-
-        
-
-        Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
-        
-        for(int i = 0 ; i < 30 ; i++){
-            for(int j = 0 ; j < 30 ; j++){
-                mazeLabel[i][j] = new JLabel();
-                mazeLabel[i][j].setOpaque(true);
-                if(Maze.map[i][j] == 1)
-                    mazeLabel[i][j].setBackground(Color.BLACK);
-                mazeLabel[i][j].setBorder(border);
-                mainPanel.add(mazeLabel[i][j]);
-                //System.out.println("1");
-                //mainPanel.repaint();
-            }
-        }
 
         JButton testButton = new JButton("Start");
-        JButton testButton2 = new JButton("Start1");
         testButton.setPreferredSize(new Dimension(80,20));
+
+        //Bottom Panel
         JPanel testPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         testPanel.setPreferredSize(new Dimension(100,20));
         testPanel.add(testButton);
@@ -72,65 +52,19 @@ public class main extends JFrame implements KeyListener{
         vsplit.setEnabled(false);
         this.getContentPane().add(vsplit);
 
-        //testPanel.add(testButton2);
-        //mainframe.add(testPanel, BorderLayout.SOUTH);
-        //mainPanel.add(testButton, BorderLayout.SOUTH);
-        //mainframe.getContentPane().add(testButton2, BorderLayout.SOUTH);
-        
-
-        do{
-            //random 0-29
-            m.setMousex(rand.nextInt(30));
-            m.setMousey(rand.nextInt(30));
-
-            //prevent spawn on wall and exit (assume exit at [29][29])
-            if(Maze.map[m.getMousex()][m.getMousey()] == 0){
-                if(m.getMousex()==29){
-                    if(m.getMousey()==29)
-                        continue;
-                }
-                mazeLabel[m.getMousex()][m.getMousey()].setIcon(Mouse.mouse); //spawn mouse
-                System.out.println(m.getMousex()+" "+m.getMousey());
-                break;
-            }
-        }while(true);
-
-        do{
-            //random 0-29
-            c1.setCatx(rand.nextInt(30));
-            c1.setCaty(rand.nextInt(30));
-
-
-            //if coordinate same with mouse then re-random
-            if(Maze.map[c1.getCatx()][c1.getCaty()] == 1 || (c1.getCatx() == m.getMousex() && c1.getCaty() == m.getMousey())){
-                continue;
-            }
-            mazeLabel[c1.getCatx()][c1.getCaty()].setIcon(Cat.cat); //spawn cat1
-            break;
-        }while(true);
-
-        do{
-            //random 0-29
-            c2.setCatx(rand.nextInt(30));
-            c2.setCaty(rand.nextInt(30));
-
-            //if coordinate same with mouse and cat1 then re-random
-            if(Maze.map[c2.getCatx()][c2.getCaty()] == 1 || (c2.getCatx() == m.getMousex() && c2.getCaty() == m.getMousey()) || (c2.getCatx() == c1.getCatx() && c2.getCaty() == c1.getCaty())){
-                continue;
-            }
-            mazeLabel[c2.getCatx()][c2.getCaty()].setIcon(Cat.cat); //spawn cat2
-            break;
-        }while(true);
-       //Color tes = testButton.getBackground();
-        
         this.setVisible(true);
+
     }
 
     //keyListener
     public void keyPressed(KeyEvent e){
         if(moveMouse(e)){
-            moveCat(c1);
-            moveCat(c2);
+            //System.out.println(m.getCheeseEat());
+
+            m.transSuperMouse(); //Transform into supermouse if the condition is match
+            m.transMouse(); //Transform back into mouse if the condition is match
+            moveCat(c1); //Cat1 move
+            moveCat(c2); //Cat2 move
         }
     }
 
@@ -138,7 +72,7 @@ public class main extends JFrame implements KeyListener{
     public void keyTyped(KeyEvent e){}
     public void keyReleased(KeyEvent e){}
 
-    //cat1 movement
+    //cat movement
     public void moveCat(Cat cat){
         int x;
         while(true){
@@ -198,7 +132,6 @@ public class main extends JFrame implements KeyListener{
         }
         return false;
     }
-
 
 }
 
