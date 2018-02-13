@@ -35,6 +35,7 @@ public class main extends JFrame implements KeyListener{
 
         String str = "maze3.txt"; //use the maze i desgined
         new Maze(str,mainPanel,m,c1,c2);
+        //Maze.printMap(Maze.map);
 
 
         JButton testButton = new JButton("Start");
@@ -59,13 +60,13 @@ public class main extends JFrame implements KeyListener{
     //keyListener
     public void keyPressed(KeyEvent e){
         if(moveMouse(e)){
-            //System.out.println(m.getCheeseEat());
-
-            m.transSuperMouse(); //Transform into supermouse if the condition is match
-            m.transMouse(); //Transform back into mouse if the condition is match
+            //Maze.printMap(Maze.map); //Debug purpose , print the map in 2 dimension
+            //System.out.println("----------------------------------------------");
+            System.out.println("cheese : " + m.getCheeseEat());
             moveCat(c1); //Cat1 move
             moveCat(c2); //Cat2 move
         }
+
     }
 
     //not using this 2 function
@@ -76,35 +77,40 @@ public class main extends JFrame implements KeyListener{
     public void moveCat(Cat cat){
         int x;
         while(true){
+
             x=rand.nextInt(4); //random 4 direction
 
             //up
             if (x==0){
+
                 try{
                     if (cat.moveUp())
                         break;
-                }catch(ArrayIndexOutOfBoundsException a){cat.setCatx(cat.getCatx()+1);}
+                }catch(ArrayIndexOutOfBoundsException a){}
             }
             //down
             if (x==1){
+
                 try{
                     if(cat.moveDown())
                         break;
-                }catch(ArrayIndexOutOfBoundsException a){cat.setCatx(cat.getCatx()-1);}
+                }catch(ArrayIndexOutOfBoundsException a){}
             } 
             //left
             if (x==2){
+
                 try{
                     if(cat.moveLeft())
                         break;
-                }catch(ArrayIndexOutOfBoundsException a){cat.setCaty(cat.getCaty()+1);}
+                }catch(ArrayIndexOutOfBoundsException a){}
             }
             //right
             if (x==3){
+
                 try{
                     if(cat.moveRight())
                         break;
-                }catch(ArrayIndexOutOfBoundsException a){cat.setCaty(cat.getCaty()-1);}
+                }catch(ArrayIndexOutOfBoundsException a){}
             }
 
         }

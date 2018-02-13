@@ -113,6 +113,7 @@ public class Maze {
                     if(m.getMousey()==29)
                         continue;
                 }
+                Maze.map[m.getMousex()][m.getMousey()] = 'm'; //Set the value m in the map 2D array
                 Maze.mazeLabel[m.getMousex()][m.getMousey()].setIcon(Mouse.getImage()); //spawn mouse
                 System.out.println(m.getMousex()+" "+m.getMousey());
                 break;
@@ -133,6 +134,7 @@ public class Maze {
             if(Maze.map[cat.getCatx()][cat.getCaty()] == 1 || Maze.mazeLabel[cat.getCatx()][cat.getCaty()].getIcon() == Cat.getImage() || Maze.mazeLabel[cat.getCatx()][cat.getCaty()].getIcon() == Mouse.getImage()){
                 continue;
             }
+            Maze.map[cat.getCatx()][cat.getCaty()] = 'c'; //Set the value c into map
             Maze.mazeLabel[cat.getCatx()][cat.getCaty()].setIcon(Cat.getImage()); //spawn cat1
             break;
         }while(true);
@@ -148,5 +150,18 @@ public class Maze {
     //Get method for Cheese Image
     public static ImageIcon getImage(){
         return currentImg;
+    }
+
+    //print map 2D array // Debug purpose
+    public static void printMap(int map[][]){
+        for(int i = 0 ; i < rows ; i++){
+            for(int j = 0 ; j < columns ; j++){
+                System.out.print(Maze.map[i][j]);
+                if(j % 30 == 29){
+                    System.out.println();
+                }
+            }
+        }
+
     }
 }

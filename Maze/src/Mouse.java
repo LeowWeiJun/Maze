@@ -3,13 +3,16 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class Mouse {
-    private int mousex;
-    private int mousey;
+    private int currMousex; //current Mouse x
+    private int currMousey; //current Mouse y
+    private int newMousex;
+    private int newMousey;
     private int cheeseEat = 0;
     private int totalCheese = 0;
     private int moveCount = 0;
     private int totalMove = 0;
-    private static ImageIcon iconMouse = new ImageIcon("mouse.png");
+    private boolean crossWall = false;
+    private static ImageIcon iconMouse = new ImageIcon("mouse.png","mouse");
     private static Image mouseImg = iconMouse.getImage();
     private static ImageIcon iconSuperMouse = new ImageIcon("supermouse.PNG");
     private static Image superMouseImg = iconSuperMouse.getImage();
@@ -24,105 +27,119 @@ public class Mouse {
     //moving mouse 1 grid upwards
     public boolean moveUp(){
         try{
-            eatCheese(mousex-1, mousey); //Eat cheese
-            mousex-=1;
+            newMousex = currMousex-1;
+            newMousey = currMousey;
+            eatCheese(newMousex, newMousey); //Eat cheese
+
+            //Cross wall Condition
+            if(Maze.map[newMousex][newMousey] == 1 && Maze.map[newMousex-1][newMousey] != 1 && Maze.map[currMousex][currMousey] == 's' ){ //
+                newMousex-=1;
+                crossWall(); //record if crossed wall
+            }
             //ignore if blocked by wall or crush on cats (prevent suicidal)
-            if (Maze.map[mousex][mousey]==1 || Maze.mazeLabel[mousex][mousey].getIcon() == Cat.getImage()  ){//|| (mousex==cat1.getCatx() && mousey ==cat1.getCaty()) || (mousex==cat2.getCatx() && mousey == cat2.getCaty())
-                mousex+=1;
+            else if (Maze.map[newMousex][newMousey]==1 || Maze.mazeLabel[newMousex][newMousey].getIcon() == Cat.getImage()  ){//|| (mousex==cat1.getCatx() && mousey ==cat1.getCaty()) || (mousex==cat2.getCatx() && mousey == cat2.getCaty())
+                newMousex+=1;
                 return false;
             }
-            else{
-                moveCount--; //decrease the movecount (for transform usage)
-                totalMove++; //increase the total move count
-                Maze.mazeLabel[mousex+1][mousey].setIcon(null); //remove old mouse spot
-                Maze.mazeLabel[mousex][mousey].setIcon(currentImg); //spawn mouse at new spot
-                System.out.println(mousex+" "+mousey);
-                return true;
-            }
-        }catch(ArrayIndexOutOfBoundsException arr){mousex+=1;}
+
+            updateLocation(); //update the value in the map
+            //System.out.println(newMousex+" "+newMousey);
+            return true;
+
+        }catch(ArrayIndexOutOfBoundsException arr){}
         return false;
     }
 
     //moving mouse 1 grid downwards
     public boolean moveDown(){
         try{
-            eatCheese(mousex+1, mousey);
-            mousex+=1;
-            if (Maze.map[mousex][mousey]==1 || Maze.mazeLabel[mousex][mousey].getIcon() == Cat.getImage()){
-                mousex-=1;
+            newMousex = currMousex+1;
+            newMousey = currMousey;
+            eatCheese(newMousex, newMousey); //Eat cheese
+
+            if(Maze.map[newMousex][newMousey] == 1 && Maze.map[newMousex+1][newMousey] != 1 && Maze.map[currMousex][currMousey] == 's' ){ //
+                newMousex+=1;
+                crossWall(); //record if crossed wall
+            }
+            else if (Maze.map[newMousex][newMousey]==1 || Maze.mazeLabel[newMousex][newMousey].getIcon() == Cat.getImage()){
+                newMousex-=1;
                 return false;
             }
-            else{
-                moveCount--;
-                totalMove++;
-                Maze.mazeLabel[mousex-1][mousey].setIcon(null);
-                Maze.mazeLabel[mousex][mousey].setIcon(currentImg);
-                System.out.println(mousex+" "+mousey);
-                return true;
-            }
-        }catch(ArrayIndexOutOfBoundsException arr){mousex-=1;}
+
+            updateLocation();
+            //System.out.println(newMousex+" "+newMousey);
+            return true;
+
+
+        }catch(ArrayIndexOutOfBoundsException arr){}
         return false;
     }
 
     //moving mouse 1 grid to the left
     public boolean moveLeft(){
         try{
-            eatCheese(mousex, mousey-1);
-            mousey-=1;
-            if (Maze.map[mousex][mousey]==1 || Maze.mazeLabel[mousex][mousey].getIcon() == Cat.getImage()){
-                mousey+=1;
+            newMousex = currMousex;
+            newMousey = currMousey-1;
+            eatCheese(newMousex, newMousey); //Eat cheese
+
+            if(Maze.map[newMousex][newMousey] == 1 && Maze.map[newMousex][newMousey-1] != 1 && Maze.map[currMousex][currMousey] == 's' ){ //
+                newMousey-=1;
+                crossWall(); //record if crossed wall
+            }
+            else if (Maze.map[newMousex][newMousey]==1 || Maze.mazeLabel[newMousex][newMousey].getIcon() == Cat.getImage()){
+                newMousey+=1;
                 return false;
             }
-            else{
-                moveCount--;
-                totalMove++;
-                Maze.mazeLabel[mousex][mousey+1].setIcon(null);
-                Maze.mazeLabel[mousex][mousey].setIcon(currentImg);
-                System.out.println(mousex+" "+mousey);
-                return true;
-            }
-        }catch(ArrayIndexOutOfBoundsException arr){mousey+=1;}
+
+            updateLocation();
+            //System.out.println(newMousex+" "+newMousey);
+            return true;
+
+        }catch(ArrayIndexOutOfBoundsException arr){}
         return false;
     }
 
     //moving mouse 1 grid to the right
     public boolean moveRight(){
         try{
-            eatCheese(mousex, mousey+1);
-            mousey+=1;
-            if (Maze.map[mousex][mousey]==1 || Maze.mazeLabel[mousex][mousey].getIcon() == Cat.getImage()){
-                mousey-=1;
+            newMousex = currMousex;
+            newMousey = currMousey+1;
+            eatCheese(newMousex, newMousey); //Eat cheese
+
+            if(Maze.map[newMousex][newMousey] == 1 && Maze.map[newMousex][newMousey+1] != 1 && Maze.map[currMousex][currMousey] == 's' ){ //
+                newMousey+=1;
+                crossWall(); //record if crossed wall
+            }
+            else if (Maze.map[newMousex][newMousey]==1 || Maze.mazeLabel[newMousex][newMousey].getIcon() == Cat.getImage()){
+                newMousey-=1;
                 return false;
             }
-            else{
-                moveCount--;
-                totalMove++;
-                Maze.mazeLabel[mousex][mousey-1].setIcon(null);
-                Maze.mazeLabel[mousex][mousey].setIcon(currentImg);
-                System.out.println(mousex+" "+mousey);
-                return true;
-            }
-        }catch(ArrayIndexOutOfBoundsException arr){mousey-=1;}
+
+            updateLocation();
+            //System.out.println(newMousex+" "+newMousey);
+            return true;
+
+        }catch(ArrayIndexOutOfBoundsException arr){}
         return false;
     }
     //Set method for mouse x value
-    public void setMousex(int mousex){
-        this.mousex = mousex;
+    public void setMousex(int currMousex){
+        this.currMousex = currMousex;
     }
 
     //Get method for mouse x value
     public int getMousex(){
-        return mousex;
+        return currMousex;
     }
 
     //Set method for mouse y value
-    public void setMousey(int mousey){
-        this.mousey = mousey;
+    public void setMousey(int currMousey){
+        this.currMousey = currMousey;
     }
 
     //Get method for mouse y value
     public int getMousey(){
-        return mousey;
+        return currMousey;
     }
 
     //Eat Cheese
@@ -131,7 +148,10 @@ public class Mouse {
             if(Maze.mazeLabel[mousex][mousey].getIcon() == Maze.getImage()){
                 cheeseEat++; //calculate the cheeseEat (for transform usage)
                 totalCheese++; //calculate total cheese eat
+
             }
+            transSuperMouse();
+
         }catch(ArrayIndexOutOfBoundsException arr){}
 
 
@@ -146,7 +166,8 @@ public class Mouse {
     public void transSuperMouse(){
         if(cheeseEat == 3){ //transform after eat 3 cheese
             setImage(superMouseImg); //change the image to super mouse image
-            Maze.mazeLabel[mousex][mousey].setIcon(currentImg); //display the image on the maze
+            Maze.map[newMousex][newMousey] = 's';
+            Maze.mazeLabel[newMousex][newMousey].setIcon(currentImg); //display the image on the maze
             cheeseEat = 0; //Reset the cheese eat
             moveCount = 10; //Super mouse form last for 10move
         }
@@ -154,11 +175,13 @@ public class Mouse {
 
     //transform back into mouse
     public void transMouse(){
-        if(moveCount == 0){ //when the 10move used up
+        if(moveCount == 0 || crossWall == true){ //when the 10move used up or crossed wall
             setImage(mouseImg); //change the image to mouse image
-            Maze.mazeLabel[mousex][mousey].setIcon(currentImg); //display the image on the maze
+            Maze.map[newMousex][newMousey] = 2;
+            Maze.mazeLabel[newMousex][newMousey].setIcon(currentImg); //display the image on the maze
 
-            cheeseEat = 0; //Reset the cheese eat that the mouse ate during super mouse form (prevent continuous transform into super mouse)
+            crossWall = false; //set the crosswall to false
+            //cheeseEat = 0; //Reset the cheese eat that the mouse ate during super mouse form (prevent continuous transform into super mouse)
         }
     }
 
@@ -172,6 +195,32 @@ public class Mouse {
     //Set method for Mouse Image
     public static ImageIcon getImage(){
         return currentImg;
+    }
+
+    //cross wall
+    public void crossWall(){
+        crossWall = true; //set the value to true when cross a wall
+    }
+
+    //update the location of mouse in 2D array and display windows
+    public void updateLocation(){
+        //Set the value m in 2D array if the old coordinate is mouse else set to s if super mouse
+        if(Maze.map[currMousex][currMousey] == 'm' && Maze.map[newMousex][newMousey] != 's' ){ //
+            Maze.map[newMousex][newMousey] = 'm';
+        }
+        else if(Maze.map[currMousex][currMousey] == 's'){
+            Maze.map[newMousex][newMousey] = 's';
+        }
+
+        transMouse(); //Transform back into mouse if the condition is match
+        moveCount--; //decrease the movecount (for transform usage)
+        totalMove++; //increase the total move count
+        Maze.map[currMousex][currMousey] = 0; //set the old location value to 0 in the map
+        Maze.mazeLabel[currMousex][currMousey].setIcon(null); //remove old mouse spot
+        Maze.mazeLabel[newMousex][newMousey].setIcon(currentImg); //spawn mouse at new spot
+        currMousex = newMousex; //Assign the new x coordinate to the current x coordinate
+        currMousey = newMousey; //Assign the new y coordinate to the current y coordinate
+
     }
 
 }
