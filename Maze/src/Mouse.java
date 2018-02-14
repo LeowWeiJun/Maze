@@ -154,7 +154,6 @@ public class Mouse {
 
         }catch(ArrayIndexOutOfBoundsException arr){}
 
-
     }
 
     //Get method for cheeseEat

@@ -62,9 +62,12 @@ public class main extends JFrame implements KeyListener{
         if(moveMouse(e)){
             //Maze.printMap(Maze.map); //Debug purpose , print the map in 2 dimension
             //System.out.println("----------------------------------------------");
-            System.out.println("cheese : " + m.getCheeseEat());
+            //System.out.println("cheese : " + m.getCheeseEat());
+
             moveCat(c1); //Cat1 move
             moveCat(c2); //Cat2 move
+            //c1.preventEatcheese();
+            //c2.preventEatcheese();
         }
 
     }

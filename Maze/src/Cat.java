@@ -6,6 +6,7 @@ public class Cat {
     private int currCaty; //current Caty
     private int newCatx;
     private int newCaty;
+    private boolean eatCheese = false;
     private static ImageIcon catIcon = new ImageIcon("cat.jpg");
     private static Image catImg = catIcon.getImage();
     private static Image image = catImg;
@@ -19,6 +20,7 @@ public class Cat {
     public boolean moveUp(){
         newCatx = currCatx - 1;
         newCaty = currCaty ;
+
         //catx-=1;
         //ignore if blocked by wall or crush one cat2
         if (Maze.map[newCatx][newCaty] == 1 || Maze.mazeLabel[newCatx][newCaty].getIcon() == getImage()){
@@ -26,6 +28,8 @@ public class Cat {
             return false;
         }
         else{
+            preventEatcheese(currCatx,currCaty);
+            eatCheese(newCatx,newCaty);
             updateLocation();
             return true;
         }
@@ -41,6 +45,8 @@ public class Cat {
             return false;
         }
         else{
+            preventEatcheese(currCatx,currCaty);
+            eatCheese(newCatx,newCaty);
             updateLocation();
             return true;
         }
@@ -56,6 +62,8 @@ public class Cat {
             return false;
         }
         else{
+            preventEatcheese(currCatx,currCaty);
+            eatCheese(newCatx,newCaty);
             updateLocation();
             return true;
         }
@@ -71,6 +79,8 @@ public class Cat {
             return false;
         }
         else {
+            preventEatcheese(currCatx,currCaty);
+            eatCheese(newCatx,newCaty);
             updateLocation();
             return true;
         }
@@ -109,12 +119,31 @@ public class Cat {
 
     //update the location of cat in 2D array and display windows
     public void updateLocation(){
-        Maze.map[currCatx][currCaty] = 0; //set the old location  of cat to value to 0 in the 2D array
+
         Maze.map[newCatx][newCaty] = 'c'; //set the new location of cat to value c
-        Maze.mazeLabel[currCatx][currCaty].setIcon(null); //remove old cat1 spot
         Maze.mazeLabel[newCatx][newCaty].setIcon(Cat.getImage());   //spawn cat1 at new spot
         //System.out.println("cat: "+catx+" "+caty);
         currCatx = newCatx;
         currCaty = newCaty;
+    }
+
+    public void eatCheese(int catx, int caty){
+        try{
+            if(Maze.mazeLabel[catx][caty].getIcon() == Maze.getImage()){
+                eatCheese = true;
+            }
+        }catch(ArrayIndexOutOfBoundsException arr){}
+    }
+
+    public void preventEatcheese(int Catx, int Caty){
+        if(eatCheese == true ){
+            System.out.println("cat : " + getCatx() + " " + getCaty());
+            Maze.mazeLabel[Catx][Caty].setIcon(Maze.getImage());   //spawn cheese if cat eat it
+            eatCheese = false;
+        }
+        else{
+            Maze.map[currCatx][currCaty] = 0; //set the old location  of cat to value to 0 in the 2D array
+            Maze.mazeLabel[currCatx][currCaty].setIcon(null); //remove old cat1 spot
+        }
     }
 }
