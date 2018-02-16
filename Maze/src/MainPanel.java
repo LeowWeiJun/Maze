@@ -76,6 +76,9 @@ public class MainPanel extends JSplitPane implements KeyListener, ActionListener
                 mainPanel.setEnabled(false); //disable movement of mouse and cats
                 startButton.setEnabled(true); //enable start button
             }
+//            else {
+//
+//            }
         }
 
     }

@@ -8,6 +8,7 @@ public class Cat {
     private int newCaty;
     private boolean removeCheese = false;
     private boolean removeExit = false;
+    private static int catCount = 0;
     private static ImageIcon catIcon = new ImageIcon("cat.jpg");
     private static Image catImg = catIcon.getImage();
     private static Image image = catImg;
@@ -15,12 +16,14 @@ public class Cat {
     private static ImageIcon currentImage=new ImageIcon(newCatImg);
 
     public Cat(){
-
+        catCount++;
+        System.out.println("catCountL: " + catCount);
     }
     //moving cat 1 grid upwards
     public boolean moveUp(){
         newCatx = currCatx - 1;
         newCaty = currCaty ;
+        eatMouse(newCatx, newCaty);
 
         //catx-=1;
         //ignore if blocked by wall or crush one cat2
@@ -40,6 +43,7 @@ public class Cat {
     public boolean moveDown(){
         newCatx = currCatx + 1;
         newCaty = currCaty ;
+        eatMouse(newCatx, newCaty);
 
         if (Maze.map[newCatx][newCaty] == 1 || Maze.mazeLabel[newCatx][newCaty].getIcon() == getImage()){//)
             newCatx-=1;
@@ -57,6 +61,7 @@ public class Cat {
     public boolean moveLeft(){
         newCatx = currCatx ;
         newCaty = currCaty - 1;
+        eatMouse(newCatx, newCaty);
 
         if (Maze.map[newCatx][newCaty] == 1  || Maze.mazeLabel[newCatx][newCaty].getIcon() == Cat.getImage()){
             newCaty+=1;
@@ -74,6 +79,7 @@ public class Cat {
     public boolean moveRight(){
         newCatx = currCatx ;
         newCaty = currCaty + 1;
+        eatMouse(newCatx, newCaty);
 
         if (Maze.map[newCatx][newCaty] == 1 || Maze.mazeLabel[newCatx][newCaty].getIcon() == Cat.getImage()){
             newCaty-=1;
@@ -111,6 +117,22 @@ public class Cat {
         this.image = image;
         Image newCatImg=image.getScaledInstance(20, 20, Image.SCALE_SMOOTH); //set size
         ImageIcon currentImage=new ImageIcon(newCatImg);
+    }
+
+    //Eat Mouse
+    public void eatMouse(int catx, int caty){
+        try{
+            if(Maze.mazeLabel[catx][caty].getIcon() == Mouse.getImage()) {
+                System.out.println("Cat eats mouse");
+                //cheeseEat++; //calculate the cheeseEat (for transform usage)
+                //totalCheese++; //calculate total cheese eat
+                Mouse.setExitCondition(-1);
+
+            }
+
+        }catch(ArrayIndexOutOfBoundsException arr){}
+
+
     }
 
     //Set method for Cat Image
@@ -155,4 +177,7 @@ public class Cat {
             Maze.mazeLabel[currCatx][currCaty].setIcon(null); //remove old cat1 spot
         }
     }
+
+    public static int getCatCount(){return catCount;}
+    public static void setCatCount(int catCount){catCount = catCount;} //when supermouse eats cat, set catCount--;
 }

@@ -11,7 +11,7 @@ public class Mouse {
     private static int totalCheese = 0;
     private int moveCount = 0;
     private static int totalMove = 0;
-    private int exitCondition = 0; //initialise 0 as exit condition
+    private static int exitCondition = 0; //initialise 0 as exit condition
     private boolean crossWall = false;
 
     private static ImageIcon iconMouse = new ImageIcon("mouse.png","mouse");
@@ -234,7 +234,7 @@ public class Mouse {
     }
 
     //set exitCondition = 1 if mouse entered hole
-    public void enteredHole(int mousex, int mousey){
+    public static void enteredHole(int mousex, int mousey){
         try{
             if(Maze.mazeLabel[mousex][mousey].getIcon() == Maze.getExitImage()){
                 System.out.println("Entered hole");
@@ -245,7 +245,7 @@ public class Mouse {
     }
 
     //set exitCondition = -1 if mouse gets eaten by cat
-    public void eatenByCat(int mousex, int mousey){
+    public static void eatenByCat(int mousex, int mousey){
         try{
             if(Maze.mazeLabel[mousex][mousey].getIcon() == Cat.getImage()){
                 System.out.println("Eaten by cat");
@@ -267,13 +267,13 @@ public class Mouse {
     }
 
     //get method for exitCondition
-    public int getExitCondition(){
+    public static int getExitCondition(){
         return exitCondition;
     }
 
     //set method for exitCondition
-    public void setExitCondition(int num){
-        this.exitCondition = num;
+    public static void setExitCondition(int num){
+        exitCondition = num;
     }
 
     public void clear(){ //clear cheese eat, move count total cheese, total move and transform back to mouse if it is in supermouse form

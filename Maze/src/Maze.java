@@ -163,6 +163,19 @@ public class Maze {
         }while(true);
     }
 
+    //print map 2D array // Debug purpose
+    public static void printMap(int map[][]){
+        for(int i = 0 ; i < rows ; i++){
+            for(int j = 0 ; j < columns ; j++){
+                System.out.print(Maze.map[i][j]);
+                if(j % 30 == 29){
+                    System.out.println();
+                }
+            }
+        }
+
+    }
+
     //Set method for Cheese Image
     public void setCheeseImage(Image image){
         this.image = image;
@@ -191,7 +204,7 @@ public class Maze {
 
         for(int x = 0 ; x < 30; x++) {
             for (int y = 0; y < 30; y++) {
-                System.out.println("clear board" + "x: " + x + ", y:" + y);
+                //System.out.println("clear board" + "x: " + x + ", y:" + y);
                 Maze.mazeLabel[x][y].setIcon(null); //set all icons == null
             }
         }
