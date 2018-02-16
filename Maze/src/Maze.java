@@ -10,22 +10,27 @@ public class Maze {
     private static int rows = 30;
     private static int cheeseCount = 20;
     private static Random rand = new Random();
+
+    //cheese icon
     private static ImageIcon iconCheese = new ImageIcon("cheese.png");
     private static Image cheeseImg = iconCheese.getImage();
     private static Image image = cheeseImg;
     private static Image newCheeseImg=image.getScaledInstance(20, 20, Image.SCALE_SMOOTH); //set size
-    private static ImageIcon currentImg = new ImageIcon(newCheeseImg);
+    private static ImageIcon currentCheeseImg = new ImageIcon(newCheeseImg);
+
+    //exit icon
+    private static ImageIcon iconExit = new ImageIcon("exit.jpg");
+    private static Image exitImg = iconExit.getImage();
+    private static Image newExitImg = exitImg.getScaledInstance(20, 20, Image.SCALE_SMOOTH); //set size
+    private static ImageIcon currentExitImg = new ImageIcon(newExitImg);
 
     public static int map[][] = new int[rows][columns];
     public static JLabel[][] mazeLabel = new JLabel[30][30]; //this mazeLabel initialization i bring up because my keyPressed function nid it
 
-    public Maze(String str,JPanel panel,Mouse mouse,Cat cat1,Cat cat2){
-        loadMap(str); //load the map from text file
-        paintWall(panel); //Color the wall
-        spawnMouse(mouse); // Random Spawn mouse
-        spawnCat(cat1); // Random Spawn Cat1
-        spawnCat(cat2); // Random Spawn Cat2
-        spawnCheese(); // Random Spawn 20 cheese
+    public Maze(String str,JPanel panel){
+        loadMap(str); //load the map from text file/
+        paintWall(panel); //Color the wall/
+        //initMaze(mouse,cat1,cat2);
     }
 
     public static void loadMap(String str){
@@ -64,22 +69,40 @@ public class Maze {
     }
 
     //Spawn 20 cheeses
-    public void spawnCheese(){
+    public static void spawnCheese(){
+        cheeseCount = 20;
         do{
             //random 0-29
             int x = rand.nextInt(30);
             int y = rand.nextInt(30);
 
             //prevent spawn on wall , mouse and cat
-            if(Maze.map[x][y] == 1 || mazeLabel[x][y].getIcon() == Cat.getImage() || mazeLabel[x][y].getIcon() == Mouse.getImage() || mazeLabel[x][y].getIcon() == Maze.getImage()){
+            if(Maze.map[x][y] == 1 || mazeLabel[x][y].getIcon() == Cat.getImage() || mazeLabel[x][y].getIcon() == Mouse.getImage() || mazeLabel[x][y].getIcon() == Maze.getCheeseImage()){
                 continue;
             }
-                mazeLabel[x][y].setIcon(Maze.getImage()); //spawn cheese
-                System.out.println(x+" "+y);
-                cheeseCount--;
-                //System.out.print(cheeseCount);
+            mazeLabel[x][y].setIcon(Maze.getCheeseImage()); //spawn cheese
+            System.out.println("Cheese Location: " + x+" "+y);
+            cheeseCount--;
+            //System.out.print(cheeseCount);
 
         }while(cheeseCount > 0);
+    }
+
+    public static void spawnExit(){
+        do{
+            //random 0-29
+            int x = rand.nextInt(30);
+            int y = rand.nextInt(30);
+
+            //prevent spawn on wall , mouse, cat and cheese
+            if(Maze.map[x][y] == 1 || mazeLabel[x][y].getIcon() == Cat.getImage()
+                    || mazeLabel[x][y].getIcon() == Mouse.getImage() || mazeLabel[x][y].getIcon() == Maze.getCheeseImage()){
+                continue;
+            }
+            mazeLabel[x][y].setIcon(Maze.getExitImage()); //spawn cheese
+            System.out.println(x+" "+y);
+            break;
+        }while(true);
     }
 
     //Paint the wall
@@ -101,7 +124,7 @@ public class Maze {
     }
 
     //Spawn mouse
-    public void spawnMouse(Mouse m){
+    public static void spawnMouse(Mouse m){
         do{
             //random 0-29
             m.setMousex(rand.nextInt(30));
@@ -113,7 +136,6 @@ public class Maze {
                     if(m.getMousey()==29)
                         continue;
                 }
-                Maze.map[m.getMousex()][m.getMousey()] = 'm'; //Set the value m in the map 2D array
                 Maze.mazeLabel[m.getMousex()][m.getMousey()].setIcon(Mouse.getImage()); //spawn mouse
                 System.out.println(m.getMousex()+" "+m.getMousey());
                 break;
@@ -122,8 +144,10 @@ public class Maze {
 
     }
 
+
+
     //Spawn cat
-    public void spawnCat(Cat cat){
+    public static void spawnCat(Cat cat){
         do{
             //random 0-29
             cat.setCatx(rand.nextInt(30));
@@ -134,34 +158,49 @@ public class Maze {
             if(Maze.map[cat.getCatx()][cat.getCaty()] == 1 || Maze.mazeLabel[cat.getCatx()][cat.getCaty()].getIcon() == Cat.getImage() || Maze.mazeLabel[cat.getCatx()][cat.getCaty()].getIcon() == Mouse.getImage()){
                 continue;
             }
-            Maze.map[cat.getCatx()][cat.getCaty()] = 'c'; //Set the value c into map
             Maze.mazeLabel[cat.getCatx()][cat.getCaty()].setIcon(Cat.getImage()); //spawn cat1
             break;
         }while(true);
     }
 
     //Set method for Cheese Image
-    public void setImage(Image image){
+    public void setCheeseImage(Image image){
         this.image = image;
         newCheeseImg=image.getScaledInstance(20, 20, Image.SCALE_SMOOTH); //set size
-        currentImg=new ImageIcon(newCheeseImg);
+        currentCheeseImg=new ImageIcon(newCheeseImg);
     }
 
     //Get method for Cheese Image
-    public static ImageIcon getImage(){
-        return currentImg;
+    public static ImageIcon getCheeseImage(){
+        return currentCheeseImg;
     }
 
-    //print map 2D array // Debug purpose
-    public static void printMap(int map[][]){
-        for(int i = 0 ; i < rows ; i++){
-            for(int j = 0 ; j < columns ; j++){
-                System.out.print(Maze.map[i][j]);
-                if(j % 30 == 29){
-                    System.out.println();
-                }
+    //Set method for Exit Image
+    public void setExitImage(Image image){
+        exitImg = image;
+        newExitImg=image.getScaledInstance(20, 20, Image.SCALE_SMOOTH); //set size
+        currentExitImg=new ImageIcon(newExitImg);
+    }
+
+    //Get method for Exit Image
+    public static ImageIcon getExitImage(){
+        return currentExitImg;
+    }
+
+    public static void clearMaze(){ //clear maze before re-initiating it
+
+        for(int x = 0 ; x < 30; x++) {
+            for (int y = 0; y < 30; y++) {
+                System.out.println("clear board" + "x: " + x + ", y:" + y);
+                Maze.mazeLabel[x][y].setIcon(null); //set all icons == null
             }
         }
-
+    }
+    public static void initMaze(Mouse mouse,Cat cat1,Cat cat2){ //initiate maze with mouse, cats and cheeses
+        spawnMouse(mouse); // Random Spawn mouse
+        spawnCat(cat1); // Random Spawn Cat1
+        spawnCat(cat2); // Random Spawn Cat2
+        spawnCheese(); // Random Spawn 20 cheese
+        spawnExit(); //Spawn exit
     }
 }

@@ -6,7 +6,8 @@ public class Cat {
     private int currCaty; //current Caty
     private int newCatx;
     private int newCaty;
-    private boolean eatCheese = false;
+    private boolean removeCheese = false;
+    private boolean removeExit = false;
     private static ImageIcon catIcon = new ImageIcon("cat.jpg");
     private static Image catImg = catIcon.getImage();
     private static Image image = catImg;
@@ -28,8 +29,8 @@ public class Cat {
             return false;
         }
         else{
-            preventEatcheese(currCatx,currCaty);
-            eatCheese(newCatx,newCaty);
+            preventRemoveCheeseOrExit(currCatx,currCaty);
+            removeCheeseOrExit(newCatx,newCaty);
             updateLocation();
             return true;
         }
@@ -45,8 +46,8 @@ public class Cat {
             return false;
         }
         else{
-            preventEatcheese(currCatx,currCaty);
-            eatCheese(newCatx,newCaty);
+            preventRemoveCheeseOrExit(currCatx,currCaty);
+            removeCheeseOrExit(newCatx,newCaty);
             updateLocation();
             return true;
         }
@@ -62,8 +63,8 @@ public class Cat {
             return false;
         }
         else{
-            preventEatcheese(currCatx,currCaty);
-            eatCheese(newCatx,newCaty);
+            preventRemoveCheeseOrExit(currCatx,currCaty);
+            removeCheeseOrExit(newCatx,newCaty);
             updateLocation();
             return true;
         }
@@ -79,8 +80,8 @@ public class Cat {
             return false;
         }
         else {
-            preventEatcheese(currCatx,currCaty);
-            eatCheese(newCatx,newCaty);
+            preventRemoveCheeseOrExit(currCatx,currCaty);
+            removeCheeseOrExit(newCatx,newCaty);
             updateLocation();
             return true;
         }
@@ -127,19 +128,27 @@ public class Cat {
         currCaty = newCaty;
     }
 
-    public void eatCheese(int catx, int caty){
+    public void removeCheeseOrExit(int catx, int caty){ //check if cat removes cheese or exit and set removeCheese and removeExit
         try{
-            if(Maze.mazeLabel[catx][caty].getIcon() == Maze.getImage()){
-                eatCheese = true;
+            if(Maze.mazeLabel[catx][caty].getIcon() == Maze.getCheeseImage()){ //if cat is on the same grid as cheese
+                removeCheese = true;
+            }
+            if(Maze.mazeLabel[catx][caty].getIcon() == Maze.getExitImage()){ //if cat is on the same grid as exit
+                removeExit = true;
             }
         }catch(ArrayIndexOutOfBoundsException arr){}
     }
 
-    public void preventEatcheese(int Catx, int Caty){
-        if(eatCheese == true ){
+    public void preventRemoveCheeseOrExit(int Catx, int Caty){
+        if(removeCheese == true ){
             System.out.println("cat : " + getCatx() + " " + getCaty());
-            Maze.mazeLabel[Catx][Caty].setIcon(Maze.getImage());   //spawn cheese if cat eat it
-            eatCheese = false;
+            Maze.mazeLabel[Catx][Caty].setIcon(Maze.getCheeseImage());   //spawn cheese if cat removes it
+            removeCheese = false;
+        }
+        else if(removeExit == true ){
+            System.out.println("cat : " + getCatx() + " " + getCaty());
+            Maze.mazeLabel[Catx][Caty].setIcon(Maze.getExitImage());   //spawn exit if cat removes it
+            removeExit = false;
         }
         else{
             Maze.map[currCatx][currCaty] = 0; //set the old location  of cat to value to 0 in the 2D array
