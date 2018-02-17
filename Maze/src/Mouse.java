@@ -8,10 +8,13 @@ public class Mouse {
     private int newMousex;
     private int newMousey;
     private int cheeseEat = 0;
-    private int totalCheese = 0;
+    private static int totalCheese = 0;
     private int moveCount = 0;
-    private int totalMove = 0;
+    private static int totalMove = 0;
+    private static int exitCondition = 0; //initialise 0 as exit condition
     private boolean crossWall = false;
+    private static boolean mouseExist = true;
+
     private static ImageIcon iconMouse = new ImageIcon("mouse.png","mouse");
     private static Image mouseImg = iconMouse.getImage();
     private static ImageIcon iconSuperMouse = new ImageIcon("supermouse.PNG");
@@ -29,20 +32,25 @@ public class Mouse {
         try{
             newMousex = currMousex-1;
             newMousey = currMousey;
+            enteredHole(newMousex, newMousey); //set exit condition if mouse has entered hole
+            eatenByCat(newMousex, newMousey);
             eatCheese(newMousex, newMousey); //Eat cheese
+            eatCat(newMousex,newMousey);
 
             //Cross wall Condition
-            if(Maze.map[newMousex][newMousey] == 1 && Maze.map[newMousex-1][newMousey] != 1 && Maze.map[currMousex][currMousey] == 's' ){ //
+            if(Maze.map[newMousex][newMousey] == 1 && Maze.map[newMousex-1][newMousey] != 1 && Maze.map[currMousex][currMousey] == 4 ){ //
                 newMousex-=1;
                 crossWall(); //record if crossed wall
             }
             //ignore if blocked by wall or crush on cats (prevent suicidal)
-            else if (Maze.map[newMousex][newMousey]==1 || Maze.mazeLabel[newMousex][newMousey].getIcon() == Cat.getImage()  ){//|| (mousex==cat1.getCatx() && mousey ==cat1.getCaty()) || (mousex==cat2.getCatx() && mousey == cat2.getCaty())
+            else if (Maze.map[newMousex][newMousey]==1  ){//|| (mousex==cat1.getCatx() && mousey ==cat1.getCaty()) || (mousex==cat2.getCatx() && mousey == cat2.getCaty())
                 newMousex+=1;
                 return false;
             }
 
-            updateLocation(); //update the value in the map
+            if(mouseExist == true){
+                updateLocation();//update the value in the map
+            }
             //System.out.println(newMousex+" "+newMousey);
             return true;
 
@@ -55,18 +63,24 @@ public class Mouse {
         try{
             newMousex = currMousex+1;
             newMousey = currMousey;
+            enteredHole(newMousex, newMousey); //set exit condition if mouse has entered hole
+            eatenByCat(newMousex, newMousey);
             eatCheese(newMousex, newMousey); //Eat cheese
+            eatCat(newMousex,newMousey);
 
-            if(Maze.map[newMousex][newMousey] == 1 && Maze.map[newMousex+1][newMousey] != 1 && Maze.map[currMousex][currMousey] == 's' ){ //
+            if(Maze.map[newMousex][newMousey] == 1 && Maze.map[newMousex+1][newMousey] != 1 && Maze.map[currMousex][currMousey] == 4 ){ //
                 newMousex+=1;
                 crossWall(); //record if crossed wall
             }
-            else if (Maze.map[newMousex][newMousey]==1 || Maze.mazeLabel[newMousex][newMousey].getIcon() == Cat.getImage()){
+            else if (Maze.map[newMousex][newMousey]==1 ){
                 newMousex-=1;
                 return false;
             }
 
-            updateLocation();
+            if(mouseExist == true){
+                updateLocation();
+            }
+
             //System.out.println(newMousex+" "+newMousey);
             return true;
 
@@ -80,18 +94,23 @@ public class Mouse {
         try{
             newMousex = currMousex;
             newMousey = currMousey-1;
+            enteredHole(newMousex, newMousey); //set exit condition if mouse has entered hole
+            eatenByCat(newMousex, newMousey);
             eatCheese(newMousex, newMousey); //Eat cheese
+            eatCat(newMousex,newMousey);
 
-            if(Maze.map[newMousex][newMousey] == 1 && Maze.map[newMousex][newMousey-1] != 1 && Maze.map[currMousex][currMousey] == 's' ){ //
+            if(Maze.map[newMousex][newMousey] == 1 && Maze.map[newMousex][newMousey-1] != 1 && Maze.map[currMousex][currMousey] == 4 ){ //
                 newMousey-=1;
                 crossWall(); //record if crossed wall
             }
-            else if (Maze.map[newMousex][newMousey]==1 || Maze.mazeLabel[newMousex][newMousey].getIcon() == Cat.getImage()){
+            else if (Maze.map[newMousex][newMousey]==1){
                 newMousey+=1;
                 return false;
             }
 
-            updateLocation();
+            if(mouseExist == true){
+                updateLocation();
+            }
             //System.out.println(newMousex+" "+newMousey);
             return true;
 
@@ -104,18 +123,23 @@ public class Mouse {
         try{
             newMousex = currMousex;
             newMousey = currMousey+1;
+            enteredHole(newMousex, newMousey); //set exit condition if mouse has entered hole
+            eatenByCat(newMousex, newMousey);
             eatCheese(newMousex, newMousey); //Eat cheese
+            eatCat(newMousex,newMousey);
 
-            if(Maze.map[newMousex][newMousey] == 1 && Maze.map[newMousex][newMousey+1] != 1 && Maze.map[currMousex][currMousey] == 's' ){ //
+            if(Maze.map[newMousex][newMousey] == 1 && Maze.map[newMousex][newMousey+1] != 1 && Maze.map[currMousex][currMousey] == 4 ){ //
                 newMousey+=1;
                 crossWall(); //record if crossed wall
             }
-            else if (Maze.map[newMousex][newMousey]==1 || Maze.mazeLabel[newMousex][newMousey].getIcon() == Cat.getImage()){
+            else if (Maze.map[newMousex][newMousey]==1 ){
                 newMousey-=1;
                 return false;
             }
 
-            updateLocation();
+            if(mouseExist == true){
+                updateLocation();
+            }
             //System.out.println(newMousex+" "+newMousey);
             return true;
 
@@ -145,7 +169,7 @@ public class Mouse {
     //Eat Cheese
     public void eatCheese(int mousex, int mousey){
         try{
-            if(Maze.mazeLabel[mousex][mousey].getIcon() == Maze.getImage()){
+            if(Maze.mazeLabel[mousex][mousey].getIcon() == Maze.getCheeseImage()){
                 cheeseEat++; //calculate the cheeseEat (for transform usage)
                 totalCheese++; //calculate total cheese eat
 
@@ -156,6 +180,8 @@ public class Mouse {
 
     }
 
+
+
     //Get method for cheeseEat
     public int getCheeseEat(){
         return cheeseEat;
@@ -165,7 +191,7 @@ public class Mouse {
     public void transSuperMouse(){
         if(cheeseEat == 3){ //transform after eat 3 cheese
             setImage(superMouseImg); //change the image to super mouse image
-            Maze.map[newMousex][newMousey] = 's';
+            Maze.map[newMousex][newMousey] = 4;
             Maze.mazeLabel[newMousex][newMousey].setIcon(currentImg); //display the image on the maze
             cheeseEat = 0; //Reset the cheese eat
             moveCount = 10; //Super mouse form last for 10move
@@ -204,11 +230,11 @@ public class Mouse {
     //update the location of mouse in 2D array and display windows
     public void updateLocation(){
         //Set the value m in 2D array if the old coordinate is mouse else set to s if super mouse
-        if(Maze.map[currMousex][currMousey] == 'm' && Maze.map[newMousex][newMousey] != 's' ){ //
-            Maze.map[newMousex][newMousey] = 'm';
+        if(Maze.map[currMousex][currMousey] == 2 && Maze.map[newMousex][newMousey] != 4 ){ //
+            Maze.map[newMousex][newMousey] = 2;
         }
-        else if(Maze.map[currMousex][currMousey] == 's'){
-            Maze.map[newMousex][newMousey] = 's';
+        else if(Maze.map[currMousex][currMousey] == 4){
+            Maze.map[newMousex][newMousey] = 4;
         }
 
         transMouse(); //Transform back into mouse if the condition is match
@@ -220,6 +246,77 @@ public class Mouse {
         currMousex = newMousex; //Assign the new x coordinate to the current x coordinate
         currMousey = newMousey; //Assign the new y coordinate to the current y coordinate
 
+    }
+
+    //set exitCondition = 1 if mouse entered hole
+    public static void enteredHole(int mousex, int mousey){
+        try{
+            if(Maze.mazeLabel[mousex][mousey].getIcon() == Maze.getExitImage()){
+                System.out.println("Entered hole");
+                exitCondition = 1;
+            }
+        }catch(ArrayIndexOutOfBoundsException arr){}
+
+    }
+
+    //set exitCondition = -1 if mouse gets eaten by cat
+    public void eatenByCat(int mousex, int mousey){
+        try{
+            if(Maze.mazeLabel[mousex][mousey].getIcon() == Cat.getImage() && Maze.map[currMousex][currMousey] == 2){
+                Maze.mazeLabel[currMousex][currMousey].setIcon(null);
+                Maze.map[currMousex][currMousey] = 0;
+                System.out.println("Eaten by cat");
+                exitCondition = -1;
+                mouseExist = false;
+            }
+        }catch(ArrayIndexOutOfBoundsException arr){}
+
+    }
+
+    //set exitCondition = 1 if super mouse eat both cats
+     public void eatCat(int mousex , int mousey){
+         try{
+             if(Maze.mazeLabel[mousex][mousey].getIcon() == Cat.getImage() && Maze.map[currMousex][currMousey] == 4){
+                 Maze.mazeLabel[currMousex][currMousey].setIcon(null);
+                 Cat.setCatCount(Cat.getCatCount()-1);
+                 System.out.println("Eat cat");
+                 if(Cat.getCatCount() == 0){
+                     System.out.println("All Cat dies");
+                     exitCondition = 1;
+                 }
+             }
+         }catch(ArrayIndexOutOfBoundsException arr){}
+     }
+
+
+    //get method for totalCheese
+    public static int getTotalCheese(){
+        return totalCheese;
+    }
+
+    //get method for totalMove
+    public static int getTotalMove(){
+        return totalMove;
+    }
+
+    //get method for exitCondition
+    public static int getExitCondition(){
+        return exitCondition;
+    }
+
+    //set method for exitCondition
+    public static void setExitCondition(int num){
+        exitCondition = num;
+    }
+
+    public void clear(){ //clear cheese eat, move count total cheese, total move and transform back to mouse if it is in supermouse form
+                         //for restarting game purpose
+        cheeseEat = 0;
+        moveCount = 0;
+        transMouse();
+        totalCheese = 0;
+        totalMove = 0;
+        mouseExist = true;
     }
 
 }

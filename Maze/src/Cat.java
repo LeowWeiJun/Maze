@@ -6,7 +6,9 @@ public class Cat {
     private int currCaty; //current Caty
     private int newCatx;
     private int newCaty;
-    private boolean eatCheese = false;
+    private boolean removeCheese = false;
+    private boolean removeExit = false;
+    private static int catCount = 0;
     private static ImageIcon catIcon = new ImageIcon("cat.jpg");
     private static Image catImg = catIcon.getImage();
     private static Image image = catImg;
@@ -14,22 +16,24 @@ public class Cat {
     private static ImageIcon currentImage=new ImageIcon(newCatImg);
 
     public Cat(){
-
+        catCount++;
+        System.out.println("catCountL: " + catCount);
     }
     //moving cat 1 grid upwards
     public boolean moveUp(){
         newCatx = currCatx - 1;
         newCaty = currCaty ;
+        eatMouse(newCatx, newCaty);
 
         //catx-=1;
-        //ignore if blocked by wall or crush one cat2
-        if (Maze.map[newCatx][newCaty] == 1 || Maze.mazeLabel[newCatx][newCaty].getIcon() == getImage()){
+        //ignore if blocked by wall or crush one cat2 or super mouse
+        if (Maze.map[newCatx][newCaty] == 1 || Maze.mazeLabel[newCatx][newCaty].getIcon() == getImage() || Maze.map[newCatx][newCaty] == 4){
             newCatx+=1;
             return false;
         }
         else{
-            preventEatcheese(currCatx,currCaty);
-            eatCheese(newCatx,newCaty);
+            preventRemoveCheeseOrExit(currCatx,currCaty);
+            removeCheeseOrExit(newCatx,newCaty);
             updateLocation();
             return true;
         }
@@ -39,14 +43,15 @@ public class Cat {
     public boolean moveDown(){
         newCatx = currCatx + 1;
         newCaty = currCaty ;
+        eatMouse(newCatx, newCaty);
 
-        if (Maze.map[newCatx][newCaty] == 1 || Maze.mazeLabel[newCatx][newCaty].getIcon() == getImage()){//)
+        if (Maze.map[newCatx][newCaty] == 1 || Maze.mazeLabel[newCatx][newCaty].getIcon() == getImage() || Maze.map[newCatx][newCaty] == 4){//)
             newCatx-=1;
             return false;
         }
         else{
-            preventEatcheese(currCatx,currCaty);
-            eatCheese(newCatx,newCaty);
+            preventRemoveCheeseOrExit(currCatx,currCaty);
+            removeCheeseOrExit(newCatx,newCaty);
             updateLocation();
             return true;
         }
@@ -56,14 +61,15 @@ public class Cat {
     public boolean moveLeft(){
         newCatx = currCatx ;
         newCaty = currCaty - 1;
+        eatMouse(newCatx, newCaty);
 
-        if (Maze.map[newCatx][newCaty] == 1  || Maze.mazeLabel[newCatx][newCaty].getIcon() == Cat.getImage()){
+        if (Maze.map[newCatx][newCaty] == 1  || Maze.mazeLabel[newCatx][newCaty].getIcon() == Cat.getImage() || Maze.map[newCatx][newCaty] == 4){
             newCaty+=1;
             return false;
         }
         else{
-            preventEatcheese(currCatx,currCaty);
-            eatCheese(newCatx,newCaty);
+            preventRemoveCheeseOrExit(currCatx,currCaty);
+            removeCheeseOrExit(newCatx,newCaty);
             updateLocation();
             return true;
         }
@@ -73,14 +79,15 @@ public class Cat {
     public boolean moveRight(){
         newCatx = currCatx ;
         newCaty = currCaty + 1;
+        eatMouse(newCatx, newCaty);
 
-        if (Maze.map[newCatx][newCaty] == 1 || Maze.mazeLabel[newCatx][newCaty].getIcon() == Cat.getImage()){
+        if (Maze.map[newCatx][newCaty] == 1 || Maze.mazeLabel[newCatx][newCaty].getIcon() == Cat.getImage() || Maze.map[newCatx][newCaty] == 4){
             newCaty-=1;
             return false;
         }
         else {
-            preventEatcheese(currCatx,currCaty);
-            eatCheese(newCatx,newCaty);
+            preventRemoveCheeseOrExit(currCatx,currCaty);
+            removeCheeseOrExit(newCatx,newCaty);
             updateLocation();
             return true;
         }
@@ -112,6 +119,22 @@ public class Cat {
         ImageIcon currentImage=new ImageIcon(newCatImg);
     }
 
+    //Eat Mouse
+    public void eatMouse(int catx, int caty){
+        try{
+            if(Maze.mazeLabel[catx][caty].getIcon() == Mouse.getImage() && Maze.map[catx][caty] != 4) {
+                System.out.println("Cat eats mouse");
+                //cheeseEat++; //calculate the cheeseEat (for transform usage)
+                //totalCheese++; //calculate total cheese eat
+                Mouse.setExitCondition(-1);
+
+            }
+
+        }catch(ArrayIndexOutOfBoundsException arr){}
+
+
+    }
+
     //Set method for Cat Image
     public static ImageIcon getImage(){
         return currentImage;
@@ -120,30 +143,43 @@ public class Cat {
     //update the location of cat in 2D array and display windows
     public void updateLocation(){
 
-        Maze.map[newCatx][newCaty] = 'c'; //set the new location of cat to value c
+        Maze.map[newCatx][newCaty] = 3; //set the new location of cat to value c
         Maze.mazeLabel[newCatx][newCaty].setIcon(Cat.getImage());   //spawn cat1 at new spot
         //System.out.println("cat: "+catx+" "+caty);
         currCatx = newCatx;
         currCaty = newCaty;
     }
 
-    public void eatCheese(int catx, int caty){
+    public void removeCheeseOrExit(int catx, int caty){ //check if cat removes cheese or exit and set removeCheese and removeExit
         try{
-            if(Maze.mazeLabel[catx][caty].getIcon() == Maze.getImage()){
-                eatCheese = true;
+            if(Maze.mazeLabel[catx][caty].getIcon() == Maze.getCheeseImage()){ //if cat is on the same grid as cheese
+                removeCheese = true;
+            }
+            if(Maze.mazeLabel[catx][caty].getIcon() == Maze.getExitImage()){ //if cat is on the same grid as exit
+                removeExit = true;
             }
         }catch(ArrayIndexOutOfBoundsException arr){}
     }
 
-    public void preventEatcheese(int Catx, int Caty){
-        if(eatCheese == true ){
+    public void preventRemoveCheeseOrExit(int Catx, int Caty){
+        if(removeCheese == true ){
             System.out.println("cat : " + getCatx() + " " + getCaty());
-            Maze.mazeLabel[Catx][Caty].setIcon(Maze.getImage());   //spawn cheese if cat eat it
-            eatCheese = false;
+            Maze.mazeLabel[Catx][Caty].setIcon(Maze.getCheeseImage());   //spawn cheese if cat removes it
+            Maze.map[Catx][Caty] = 0;
+            removeCheese = false;
+        }
+        else if(removeExit == true ){
+            System.out.println("cat : " + getCatx() + " " + getCaty());
+            Maze.mazeLabel[Catx][Caty].setIcon(Maze.getExitImage());   //spawn exit if cat removes it
+            Maze.map[Catx][Caty] = 0;
+            removeExit = false;
         }
         else{
             Maze.map[currCatx][currCaty] = 0; //set the old location  of cat to value to 0 in the 2D array
             Maze.mazeLabel[currCatx][currCaty].setIcon(null); //remove old cat1 spot
         }
     }
+
+    public static int getCatCount(){return catCount;}
+    public static void setCatCount(int catCount){Cat.catCount = catCount;} //when supermouse eats cat, set catCount--;
 }
