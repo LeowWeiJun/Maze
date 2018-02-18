@@ -92,10 +92,67 @@ public class MainPanel extends JSplitPane implements KeyListener, ActionListener
     //cat movement
     public void moveCat(Cat cat){
         int x;
+        int distanceX ;
+        int distanceY ;
         if(Maze.mazeLabel[cat.getCatx()][cat.getCaty()].getIcon() == cat.getImage()){
             while(true){
+                distanceX = cat.getCatx() - m.getMousex();
+                distanceY = cat.getCaty() - m.getMousey();
 
-                x=rand.nextInt(4); //random 4 direction
+                System.out.println("X : " + distanceX);
+                System.out.println("Y : " + distanceY);
+                System.out.println("Cat : " + cat.getCatx() + " " + cat.getCaty());
+                if(distanceX <= 3 && distanceX > 0 && cat.getCaty() == m.getMousey() && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()-1][cat.getCaty()] != 1){
+                    x = 0;
+                    System.out.println("u");
+                }
+                else if(distanceX >=-3 && distanceX < 0 && cat.getCaty() == m.getMousey() && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()+1][cat.getCaty()] != 1){
+                    x = 1;
+                    System.out.println("d");
+                }
+                else if(distanceY <= 3 && distanceY > 0 && cat.getCatx() == m.getMousex() && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()][cat.getCaty()-1] != 1){
+                    x = 2;
+                    System.out.println("l");
+                }
+                else if(distanceY >=-3 && distanceY < 0 && cat.getCatx() == m.getMousex() && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()][cat.getCaty()+1] != 1){
+                    x = 3;
+                    System.out.println("r");
+                }
+                else if(distanceX <= 3 && distanceX > 0 && distanceY <= 3 && distanceY > 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()-1][cat.getCaty()] != 1 && Maze.map[cat.getCatx()][cat.getCaty()-1] != 1){
+                    int y=rand.nextInt(4);
+                    if (y % 2 == 0){
+                        x = y;
+                    }
+                    else{
+                        x = -1;
+                    }
+                }
+                else if(distanceX >=-3 && distanceX < 0 && distanceY <= 3 && distanceY > 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()+1][cat.getCaty()] != 1 && Maze.map[cat.getCatx()][cat.getCaty()-1] != 1){
+                    x = rand.nextInt(1+1)+1;
+                }
+                else if(distanceX <= 3 && distanceX > 0 && distanceY >=-3 && distanceY < 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()-1][cat.getCaty()] != 1 && Maze.map[cat.getCatx()][cat.getCaty()+1] != 1){
+                    int y=rand.nextInt(4);
+                    if ( y == 0 || y == 3){
+                        x = y;
+                    }
+                    else{
+                        x = -1;
+                    }
+                }
+                else if(distanceX >=-3 && distanceX < 0 && distanceY >=-3 && distanceY < 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()+1][cat.getCaty()] != 1 && Maze.map[cat.getCatx()][cat.getCaty()+1] != 1){
+                    int y=rand.nextInt(4);
+                    if (y % 2 != 0){
+                        x = y;
+                    }
+                    else{
+                        x = -1;
+                    }
+                }
+                else{
+                    x=rand.nextInt(4); //random 4 direction
+                    System.out.println("random");
+                }
+
 
                 //up
                 if (x==0){
