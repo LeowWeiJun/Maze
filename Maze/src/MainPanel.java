@@ -118,7 +118,7 @@ public class MainPanel extends JSplitPane implements KeyListener, ActionListener
                     x = 3;
                     System.out.println("r");
                 }
-                else if(distanceX <= 3 && distanceX > 0 && distanceY <= 3 && distanceY > 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()-1][cat.getCaty()] != 1 && Maze.map[cat.getCatx()][cat.getCaty()-1] != 1){
+                else if(distanceX <= 3 && distanceX > 0 && distanceY <= 3 && distanceY > 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && (Maze.map[cat.getCatx()-1][cat.getCaty()] != 1 || Maze.map[cat.getCatx()][cat.getCaty()-1] != 1)){//
                     int y=rand.nextInt(4);
                     if (y % 2 == 0){
                         x = y;
@@ -127,10 +127,10 @@ public class MainPanel extends JSplitPane implements KeyListener, ActionListener
                         x = -1;
                     }
                 }
-                else if(distanceX >=-3 && distanceX < 0 && distanceY <= 3 && distanceY > 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()+1][cat.getCaty()] != 1 && Maze.map[cat.getCatx()][cat.getCaty()-1] != 1){
+                else if(distanceX >=-3 && distanceX < 0 && distanceY <= 3 && distanceY > 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && (Maze.map[cat.getCatx()+1][cat.getCaty()] != 1 || Maze.map[cat.getCatx()][cat.getCaty()-1] != 1)){//
                     x = rand.nextInt(1+1)+1;
                 }
-                else if(distanceX <= 3 && distanceX > 0 && distanceY >=-3 && distanceY < 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()-1][cat.getCaty()] != 1 && Maze.map[cat.getCatx()][cat.getCaty()+1] != 1){
+                else if(distanceX <= 3 && distanceX > 0 && distanceY >=-3 && distanceY < 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && (Maze.map[cat.getCatx()-1][cat.getCaty()] != 1 || Maze.map[cat.getCatx()][cat.getCaty()+1] != 1)){//
                     int y=rand.nextInt(4);
                     if ( y == 0 || y == 3){
                         x = y;
@@ -139,7 +139,7 @@ public class MainPanel extends JSplitPane implements KeyListener, ActionListener
                         x = -1;
                     }
                 }
-                else if(distanceX >=-3 && distanceX < 0 && distanceY >=-3 && distanceY < 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()+1][cat.getCaty()] != 1 && Maze.map[cat.getCatx()][cat.getCaty()+1] != 1){
+                else if(distanceX >=-3 && distanceX < 0 && distanceY >=-3 && distanceY < 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && (Maze.map[cat.getCatx()+1][cat.getCaty()] != 1 || Maze.map[cat.getCatx()][cat.getCaty()+1] != 1) ){//
                     int y=rand.nextInt(4);
                     if (y % 2 != 0){
                         x = y;
