@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.Random;
 
 public class Cat {
     private int currCatx; //current Catx
@@ -14,6 +15,7 @@ public class Cat {
     private static Image image = catImg;
     private static Image newCatImg=image.getScaledInstance(20, 20, Image.SCALE_SMOOTH); //set size
     private static ImageIcon currentImage=new ImageIcon(newCatImg);
+    public static Random rand = new Random();
 
     public Cat(){
         catCount++;
@@ -163,13 +165,13 @@ public class Cat {
 
     public void preventRemoveCheeseOrExit(int Catx, int Caty){
         if(removeCheese == true ){
-            System.out.println("cat : " + getCatx() + " " + getCaty());
+            //System.out.println("cat : " + getCatx() + " " + getCaty());
             Maze.mazeLabel[Catx][Caty].setIcon(Maze.getCheeseImage());   //spawn cheese if cat removes it
             Maze.map[Catx][Caty] = 0;
             removeCheese = false;
         }
         else if(removeExit == true ){
-            System.out.println("cat : " + getCatx() + " " + getCaty());
+            //System.out.println("cat : " + getCatx() + " " + getCaty());
             Maze.mazeLabel[Catx][Caty].setIcon(Maze.getExitImage());   //spawn exit if cat removes it
             Maze.map[Catx][Caty] = 0;
             removeExit = false;
@@ -182,4 +184,62 @@ public class Cat {
 
     public static int getCatCount(){return catCount;}
     public static void setCatCount(int catCount){Cat.catCount = catCount;} //when supermouse eats cat, set catCount--;
+
+    public static int chaseMouse(Cat cat, Mouse m){
+
+        int x ;
+        int distanceX = cat.getCatx() - m.getMousex();
+        int distanceY = cat.getCaty() - m.getMousey();
+
+        if(distanceX <= 3 && distanceX > 0 && cat.getCaty() == m.getMousey() && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()-1][cat.getCaty()] != 1 && Maze.map[cat.getCatx()-1][cat.getCaty()] != 3){
+            x = 0; //move Up
+        }
+        else if(distanceX >=-3 && distanceX < 0 && cat.getCaty() == m.getMousey() && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()+1][cat.getCaty()] != 1 && Maze.map[cat.getCatx()+1][cat.getCaty()] != 3){
+            x = 1; //move Down
+        }
+        else if(distanceY <= 3 && distanceY > 0 && cat.getCatx() == m.getMousex() && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()][cat.getCaty()-1] != 1 && Maze.map[cat.getCatx()][cat.getCaty()-1] != 3){
+            x = 2; //move Left
+        }
+        else if(distanceY >=-3 && distanceY < 0 && cat.getCatx() == m.getMousex() && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()][cat.getCaty()+1] != 1 && Maze.map[cat.getCatx()][cat.getCaty()+1] != 3){
+            x = 3; //move Right
+        }
+        else if(distanceX <= 3 && distanceX > 0 && distanceY <= 3 && distanceY > 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && ((Maze.map[cat.getCatx()-1][cat.getCaty()] != 1 && Maze.mazeLabel[cat.getCatx()-1][cat.getCaty()].getIcon() != Cat.getImage()) || (Maze.map[cat.getCatx()][cat.getCaty()-1] != 1 && Maze.mazeLabel[cat.getCatx()][cat.getCaty()-1].getIcon() != Cat.getImage()))){//
+            int y=rand.nextInt(4);
+            //move Up or Left
+            if (y % 2 == 0){
+                x = y;
+            }
+            else{
+                x = -1;
+            }
+        }
+        else if(distanceX >=-3 && distanceX < 0 && distanceY <= 3 && distanceY > 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && ((Maze.map[cat.getCatx()+1][cat.getCaty()] != 1 && Maze.mazeLabel[cat.getCatx()+1][cat.getCaty()].getIcon() != Cat.getImage()) || (Maze.map[cat.getCatx()][cat.getCaty()-1] != 1 && Maze.mazeLabel[cat.getCatx()][cat.getCaty()-1].getIcon() != Cat.getImage()))){//
+            x = rand.nextInt(1+1)+1; //move Down or left
+        }
+        else if(distanceX <= 3 && distanceX > 0 && distanceY >=-3 && distanceY < 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && ((Maze.map[cat.getCatx()-1][cat.getCaty()] != 1 && Maze.mazeLabel[cat.getCatx()-1][cat.getCaty()].getIcon() != Cat.getImage())|| (Maze.map[cat.getCatx()][cat.getCaty()+1] != 1 && Maze.mazeLabel[cat.getCatx()][cat.getCaty()+1].getIcon() != Cat.getImage()))){//
+            int y=rand.nextInt(4);
+            //move Up or Right
+            if ( y == 0 || y == 3){
+                x = y;
+            }
+            else{
+                x = -1;
+            }
+        }
+        else if(distanceX >=-3 && distanceX < 0 && distanceY >=-3 && distanceY < 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && ((Maze.map[cat.getCatx()+1][cat.getCaty()] != 1 && Maze.mazeLabel[cat.getCatx()+1][cat.getCaty()].getIcon() != Cat.getImage()) || (Maze.map[cat.getCatx()][cat.getCaty()+1] != 1 && Maze.mazeLabel[cat.getCatx()][cat.getCaty()+1].getIcon() != Cat.getImage())) ){//
+            int y=rand.nextInt(4);
+            //move Down or Right
+            if (y % 2 != 0){
+                x = y;
+            }
+            else{
+                x = -1;
+            }
+        }
+        else{
+            x=rand.nextInt(4); //random 4 direction
+        }
+
+        return x;
+    }
 }

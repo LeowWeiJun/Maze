@@ -25,6 +25,7 @@ public class Maze {
     private static ImageIcon currentExitImg = new ImageIcon(newExitImg);
 
     public static int map[][] = new int[rows][columns];
+    private static int initialMap[][] = new int[rows][columns];
     public static JLabel[][] mazeLabel = new JLabel[30][30]; //this mazeLabel initialization i bring up because my keyPressed function nid it
 
     public Maze(String str,JPanel panel){
@@ -56,6 +57,8 @@ public class Maze {
                     if(!mapChar.equals("\r\n") && !mapChar.equals("\n")&& !mapChar.equals("\r")){//If it's a number
                         //System.out.print(mapChar);
                         map[y][x] = Integer.parseInt(mapChar);
+                        initialMap[y][x] = Integer.parseInt(mapChar);
+
                     }else{//If it is a line break
                         x--;
                         System.out.print(mapChar);
@@ -80,6 +83,8 @@ public class Maze {
             if(Maze.map[x][y] == 1 || mazeLabel[x][y].getIcon() == Cat.getImage() || mazeLabel[x][y].getIcon() == Mouse.getImage() || mazeLabel[x][y].getIcon() == Maze.getCheeseImage()){
                 continue;
             }
+            Maze.map[x][y] = 5;
+            Maze.initialMap[x][y] = 5;
             mazeLabel[x][y].setIcon(Maze.getCheeseImage()); //spawn cheese
             System.out.println("Cheese Location: " + x+" "+y);
             cheeseCount--;
@@ -99,6 +104,8 @@ public class Maze {
                     || mazeLabel[x][y].getIcon() == Mouse.getImage() || mazeLabel[x][y].getIcon() == Maze.getCheeseImage()){
                 continue;
             }
+            Maze.map[x][y] = 6;
+            Maze.initialMap[x][y] = 6;
             mazeLabel[x][y].setIcon(Maze.getExitImage()); //spawn cheese
             System.out.println(x+" "+y);
             break;
@@ -137,6 +144,7 @@ public class Maze {
                         continue;
                 }
                 Maze.map[m.getMousex()][m.getMousey()] = 2;
+                Maze.initialMap[m.getMousex()][m.getMousey()] = 2;
                 Maze.mazeLabel[m.getMousex()][m.getMousey()].setIcon(Mouse.getImage()); //spawn mouse
                 System.out.println(m.getMousex()+" "+m.getMousey());
                 break;
@@ -160,6 +168,7 @@ public class Maze {
                 continue;
             }
             Maze.map[cat.getCatx()][cat.getCaty()] = 3;
+            Maze.initialMap[cat.getCatx()][cat.getCaty()] = 3;
             Maze.mazeLabel[cat.getCatx()][cat.getCaty()].setIcon(Cat.getImage()); //spawn cat1
             break;
         }while(true);
@@ -218,5 +227,57 @@ public class Maze {
         spawnCat(cat2); // Random Spawn Cat2
         spawnCheese(); // Random Spawn 20 cheese
         spawnExit(); //Spawn exit
+    }
+
+    public static void resetIntoInitialPosition(Mouse mouse, Cat cat1, Cat cat2){
+        System.out.println("reset");
+        clearMaze();
+        int catCount = 2;
+
+        for(int i = 0 ; i < rows ; i++){
+            for(int j = 0 ; j < columns ; j++){
+
+                switch(Maze.initialMap[i][j]) {
+                    case 0: //reset Maze.map[i][j] into 0 if initialMap[i][j] == 0
+                        Maze.map[i][j] = 0;
+                        break;
+                    case 2: //if mouse is at [i][j]
+                        Maze.mazeLabel[i][j].setIcon(Mouse.getImage());
+                        Maze.map[i][j] = 2;
+                        mouse.setMousex(i);
+                        mouse.setMousey(j);
+                        System.out.println("Mouse reset");
+                        break;
+                    case 3: //if cat is at [i][j]
+                        Maze.mazeLabel[i][j].setIcon(Cat.getImage());
+                        Maze.map[i][j] = 3;
+                        if(catCount == 2) {
+                            System.out.println("c1 is at position "+i + ", " + j);
+                            System.out.println("catCount: " + catCount);
+                            cat1.setCatx(i);
+                            cat1.setCaty(j);
+                            catCount--;
+                        }
+                        else {
+                            System.out.println("c2 is at position "+i + ", " + j);
+                            System.out.println("catCount: " + catCount);
+                            //System.out.println("getCat "+i + ", " + j);
+                            cat2.setCatx(i);
+                            cat2.setCaty(j);
+                            catCount--;
+                        }
+                        break;
+                    case 5: //if cheese is at [i][j]
+                        Maze.mazeLabel[i][j].setIcon(Maze.getCheeseImage());
+                        Maze.map[i][j] = 5;
+                        break;
+                    case 6: //if exit is at [i][j]
+                        Maze.mazeLabel[i][j].setIcon(Maze.getExitImage());
+                        Maze.map[i][j] = 6;
+                        break;
+                }
+
+            }
+        }
     }
 }

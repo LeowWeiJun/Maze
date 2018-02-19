@@ -9,12 +9,14 @@ import java.util.Random;
 
 public class MainPanel extends JSplitPane implements KeyListener, ActionListener{
 
-    public static Random rand = new Random();
+
     Mouse m = new Mouse(); //Create mouse
     Cat c1 = new Cat(); //Create 1st Cat
     Cat c2 = new Cat(); //Create 2nd Cat
     JPanel mainPanel;
     JButton startButton;
+    JButton resetButton;
+    JButton quitButton;
     String str = "maze3.txt"; //use the maze i desgined
 
     public MainPanel(){
@@ -31,17 +33,65 @@ public class MainPanel extends JSplitPane implements KeyListener, ActionListener
         new Maze(str,mainPanel);
         //Maze.printMap(Maze.map);
 
+        //Start Button
         startButton = new JButton("Start");
         startButton.setPreferredSize(new Dimension(80,20));
-        startButton.addActionListener(this);
+        startButton.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e){
+                        System.out.println("Pressed start button");
+                        mainPanel.requestFocusInWindow(); //put the focus in top panel
+                        mainPanel.setEnabled(true); //enable movements of cats and mouse
+                        startButton.setEnabled(false); //disable start button
+                        resetButton.setEnabled(true); //enable reset button
+                        Maze.initMaze(str,m,c1,c2); //spawn cheeses, mouse and cats
+                        Maze.printMap(Maze.map);
+                    }
+                }
+        );
+
+        //Reset Button
+        resetButton = new JButton("Reset");
+        resetButton.setPreferredSize(new Dimension(80,20));
+        resetButton.setEnabled(false);
+        resetButton.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.out.println("Pressed Reset Button");
+                        Maze.clearMaze();
+                        m.clearMouse();
+
+                        //mainPanel.setEnabled(false);
+                        Maze.resetIntoInitialPosition(m, c1, c2);
+                        mainPanel.requestFocusInWindow();
+                    }
+                }
+        );
+
+        //Reset Button
+        quitButton = new JButton("Quit");
+        quitButton.setPreferredSize(new Dimension(80,20));
+        quitButton.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.out.println("Pressed Quit Button");
+                        System.exit(0);
+                    }
+                }
+        );
 
         //Bottom Panel
-        JPanel testPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        testPanel.setPreferredSize(new Dimension(100,20));
-        testPanel.add(startButton);
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        bottomPanel.setPreferredSize(new Dimension(100,20));
+        bottomPanel.add(startButton);
+        bottomPanel.add(resetButton);
+        bottomPanel.add(quitButton);
 
         this.setLeftComponent(mainPanel);
-        this.setRightComponent(testPanel);
+        this.setRightComponent(bottomPanel);
         this.setDividerSize(0);
         this.setEnabled(false);
 
@@ -49,6 +99,7 @@ public class MainPanel extends JSplitPane implements KeyListener, ActionListener
 
     //keyListener
     public void keyPressed(KeyEvent e){
+        System.out.println("Cat count : " + Cat.getCatCount());
         if(moveMouse(e)){
             //System.out.println("cheese : " + m.getCheeseEat());
 
@@ -58,26 +109,7 @@ public class MainPanel extends JSplitPane implements KeyListener, ActionListener
                 moveCat(c2); //Cat2 move
             }
 
-            //Mouse win,Display details message,reset everything
-            if(m.getExitCondition() == 1){
-                m.setExitCondition(0);
-                JOptionPane.showMessageDialog(this,"You won!" + "\nTotal Cheese Ate: "+m.getTotalCheese()
-                        + "\nTotal Moves: " + m.getTotalMove(), "Game Finished", JOptionPane.INFORMATION_MESSAGE);
-                m.clear(); //clear details of mouse
-                Maze.clearMaze(); //clear maze
-                mainPanel.setEnabled(false); //disable movement of mouse and cats
-                startButton.setEnabled(true); //enable start button
-            }
-            //Mouse lost,Display details message,reset everything
-            else if(m.getExitCondition() == -1){
-                m.setExitCondition(0);
-                JOptionPane.showMessageDialog(this,"You lost!" + "\nTotal Cheese Ate: "+m.getTotalCheese()
-                        + "\nTotal Moves: " + m.getTotalMove(), "Game Over", JOptionPane.INFORMATION_MESSAGE);
-                m.clear(); //clear details of mouse
-                Maze.clearMaze(); //clear maze
-                mainPanel.setEnabled(false); //disable movement of mouse and cats
-                startButton.setEnabled(true); //enable start button
-            }
+            gameCondition();
 
             //Maze.printMap(Maze.map); //Debug purpose , print the map in 2 dimension
             //System.out.println("----------------------------------------------");
@@ -92,68 +124,9 @@ public class MainPanel extends JSplitPane implements KeyListener, ActionListener
     //cat movement
     public void moveCat(Cat cat){
         int x;
-        int distanceX ;
-        int distanceY ;
         if(Maze.mazeLabel[cat.getCatx()][cat.getCaty()].getIcon() == cat.getImage()){
             while(true){
-                distanceX = cat.getCatx() - m.getMousex();
-                distanceY = cat.getCaty() - m.getMousey();
-
-                System.out.println("X : " + distanceX);
-                System.out.println("Y : " + distanceY);
-                System.out.println("Cat : " + cat.getCatx() + " " + cat.getCaty());
-                if(distanceX <= 3 && distanceX > 0 && cat.getCaty() == m.getMousey() && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()-1][cat.getCaty()] != 1){
-                    x = 0;
-                    System.out.println("u");
-                }
-                else if(distanceX >=-3 && distanceX < 0 && cat.getCaty() == m.getMousey() && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()+1][cat.getCaty()] != 1){
-                    x = 1;
-                    System.out.println("d");
-                }
-                else if(distanceY <= 3 && distanceY > 0 && cat.getCatx() == m.getMousex() && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()][cat.getCaty()-1] != 1){
-                    x = 2;
-                    System.out.println("l");
-                }
-                else if(distanceY >=-3 && distanceY < 0 && cat.getCatx() == m.getMousex() && Maze.map[m.getMousex()][m.getMousey()] != 4 && Maze.map[cat.getCatx()][cat.getCaty()+1] != 1){
-                    x = 3;
-                    System.out.println("r");
-                }
-                else if(distanceX <= 3 && distanceX > 0 && distanceY <= 3 && distanceY > 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && (Maze.map[cat.getCatx()-1][cat.getCaty()] != 1 || Maze.map[cat.getCatx()][cat.getCaty()-1] != 1)){//
-                    int y=rand.nextInt(4);
-                    if (y % 2 == 0){
-                        x = y;
-                    }
-                    else{
-                        x = -1;
-                    }
-                }
-                else if(distanceX >=-3 && distanceX < 0 && distanceY <= 3 && distanceY > 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && (Maze.map[cat.getCatx()+1][cat.getCaty()] != 1 || Maze.map[cat.getCatx()][cat.getCaty()-1] != 1)){//
-                    x = rand.nextInt(1+1)+1;
-                }
-                else if(distanceX <= 3 && distanceX > 0 && distanceY >=-3 && distanceY < 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && (Maze.map[cat.getCatx()-1][cat.getCaty()] != 1 || Maze.map[cat.getCatx()][cat.getCaty()+1] != 1)){//
-                    int y=rand.nextInt(4);
-                    if ( y == 0 || y == 3){
-                        x = y;
-                    }
-                    else{
-                        x = -1;
-                    }
-                }
-                else if(distanceX >=-3 && distanceX < 0 && distanceY >=-3 && distanceY < 0 && Maze.map[m.getMousex()][m.getMousey()] != 4 && (Maze.map[cat.getCatx()+1][cat.getCaty()] != 1 || Maze.map[cat.getCatx()][cat.getCaty()+1] != 1) ){//
-                    int y=rand.nextInt(4);
-                    if (y % 2 != 0){
-                        x = y;
-                    }
-                    else{
-                        x = -1;
-                    }
-                }
-                else{
-                    x=rand.nextInt(4); //random 4 direction
-                    System.out.println("random");
-                }
-
-
+                x = Cat.chaseMouse(cat,m);
                 //up
                 if (x==0){
 
@@ -217,10 +190,32 @@ public class MainPanel extends JSplitPane implements KeyListener, ActionListener
 
     @Override
     public void actionPerformed(ActionEvent e){
-        System.out.println("Pressed start button");
-        mainPanel.requestFocusInWindow(); //put the focus in top panel
-        mainPanel.setEnabled(true); //enable movements of cats and mouse
-        startButton.setEnabled(false); //disable start button
-        Maze.initMaze(str,m,c1,c2); //spawn cheeses, mouse and cats
+    }
+
+    public void gameCondition(){
+        //Mouse win,Display details message,reset everything
+        if(m.getExitCondition() == 1){
+            m.setExitCondition(0);
+            JOptionPane.showMessageDialog(this,"You won!" + "\nTotal Cheese Ate: "+m.getTotalCheese()
+                    + "\nTotal Moves: " + m.getTotalMove(), "Game Finished", JOptionPane.INFORMATION_MESSAGE);
+            m.clearMouse(); //clear details of mouse
+            Cat.setCatCount(2);
+            Maze.clearMaze(); //clear maze
+            mainPanel.setEnabled(false); //disable movement of mouse and cats
+            startButton.setEnabled(true); //enable start button
+            resetButton.setEnabled(false);
+        }
+        //Mouse lost,Display details message,reset everything
+        else if(m.getExitCondition() == -1){
+            m.setExitCondition(0);
+            JOptionPane.showMessageDialog(this,"You lost!" + "\nTotal Cheese Ate: "+m.getTotalCheese()
+                    + "\nTotal Moves: " + m.getTotalMove(), "Game Over", JOptionPane.INFORMATION_MESSAGE);
+            m.clearMouse(); //clear details of mouse
+            Cat.setCatCount(2);
+            Maze.clearMaze(); //clear maze
+            mainPanel.setEnabled(false); //disable movement of mouse and cats
+            startButton.setEnabled(true); //enable start button
+            resetButton.setEnabled(false);
+        }
     }
 }
